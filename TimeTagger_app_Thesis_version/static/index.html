@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swabian TimeTagger - Scientific Dashboard</title>
+    <!-- Standard Sans-Serif Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Liberation+Sans:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Top Scientific Header -->
+        <header class="scientific-header">
+            <div class="header-left">
+                <h1>TimeTagger Scientific Control Center</h1>
+                <div class="header-sub">Swabian Instruments TimeTagger Interface</div>
+            </div>
+            <div class="header-right">
+                <button id="theme-toggle-btn" class="btn btn-secondary btn-xs">🌓 Toggle Theme</button>
+                <div id="device-status" class="status-indicator status-unknown">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Initializing...</span>
+                </div>
+                <button id="reconnect-btn" class="btn btn-secondary btn-xs">Scan Hardware</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button id="tab-btn-config" class="tab-btn active">1. Measurement & Hardware Config</button>
+            <button id="tab-btn-dash" class="tab-btn">2. Real-Time Dashboard</button>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="workspace-content">
+            
+            <!-- SECTION 1: CONFIGURATION PAGE -->
+            <section id="page-config" class="page-section">
+                <div class="config-grid">
+                    
+                    <div class="config-sidebar">
+                        <!-- Left Config: General & Measurements -->
+                        <div class="panel">
+                            <div class="panel-header">Measurement Selection</div>
+                            <div class="panel-body">
+                                <div class="form-group-checkboxes">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="cfg-measure-trace" checked>
+                                        Enable Real-Time Counter Trace
+                                    </label>
+                                    <p class="form-help">Records a scrolling history of count rates over time.</p>
+                                    
+                                    <label class="checkbox-label mt-10">
+                                        <input type="checkbox" id="cfg-measure-hist" checked>
+                                        Enable Coincidence Correlation Histogram
+                                    </label>
+                                    <p class="form-help">Measures time delays (correlations) between start and click channels.</p>
+                                </div>
+
+                                <hr class="panel-divider">
+
+                                <div class="panel-header-sub">Acquisition parameters</div>
+                                
+                                <div class="form-row">
+                                    <label for="cfg-integration">Integration Time:</label>
+                                    <select id="cfg-integration" class="form-control">
+                                        <option value="0.01">10 ms</option>
+                                        <option value="0.05">50 ms</option>
+                                        <option value="0.1" selected>100 ms</option>
+                                        <option value="0.2">200 ms</option>
+                                        <option value="0.5">500 ms</option>
+                                        <option value="1.0">1.0 s</option>
+                                        <option value="2.0">2.0 s</option>
+                                        <option value="5.0">5.0 s</option>
+                                        <option value="10.0">10.0 s</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="cfg-normalize" checked>
+                                        Normalize to Counts/sec (CPS) by default
+                                    </label>
+                                </div>
+
+                                <div class="form-row">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="cfg-simulation-mode" checked>
+                                        Enable Simulation Mode (Virtual Tagger Only)
+                                    </label>
+                                </div>
+
+                                <hr class="panel-divider">
+                                
+                                <div class="panel-header-sub">Coincidence Histogram Parameters</div>
+                                
+                                <div class="form-row">
+                                    <label for="cfg-hist-start">Start Channel:</label>
+                                    <select id="cfg-hist-start" class="form-control sm"></select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="cfg-hist-click">Click (Stop) Channel:</label>
+                                    <select id="cfg-hist-click" class="form-control sm"></select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="cfg-hist-binwidth">Bin Width (ps):</label>
+                                    <select id="cfg-hist-binwidth" class="form-control sm">
+                                        <option value="10">10 ps</option>
+                                        <option value="50">50 ps</option>
+                                        <option value="100" selected>100 ps</option>
+                                        <option value="200">200 ps</option>
+                                        <option value="500">500 ps</option>
+                                        <option value="1000">1000 ps (1 ns)</option>
+                                        <option value="5000">5000 ps (5 ns)</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="cfg-hist-bins">Number of Bins:</label>
+                                    <select id="cfg-hist-bins" class="form-control sm">
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="400" selected>400</option>
+                                        <option value="500">500</option>
+                                        <option value="800">800</option>
+                                    </select>
+                                </div>
+
+                                <hr class="panel-divider">
+                                
+                                <div class="panel-header-sub">JSI Matrix Parameters</div>
+                                
+                                <div class="form-row">
+                                    <label class="checkbox-label" style="grid-column: span 2;">
+                                        <input type="checkbox" id="cfg-measure-jsi" checked>
+                                        Enable Real-Time JSI Matrix
+                                    </label>
+                                </div>
+                                <div class="form-row">
+                                    <label for="cfg-jsi-binwidth">JSI Bin Width (ps):</label>
+                                    <select id="cfg-jsi-binwidth" class="form-control sm">
+                                        <option value="10">10 ps</option>
+                                        <option value="50">50 ps</option>
+                                        <option value="100" selected>100 ps</option>
+                                        <option value="200">200 ps</option>
+                                        <option value="500">500 ps</option>
+                                        <option value="1000">1000 ps (1 ns)</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label for="cfg-jsi-bins">JSI Bins:</label>
+                                    <select id="cfg-jsi-bins" class="form-control sm">
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="2000" selected>2000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="10000">10000</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Left Config: Import/Export Config Utilities -->
+                        <div class="panel">
+                            <div class="panel-header">Configuration Utilities</div>
+                            <div class="panel-body">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <button id="export-config-btn" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                        📤 Export Config
+                                    </button>
+                                    <button id="import-config-btn" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                        📥 Import Config
+                                    </button>
+                                </div>
+                                <input type="file" id="import-config-file" accept=".json" style="display: none;">
+                                <p class="form-help text-center">Save or load configurations locally.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Config: Channels & Trigger Voltages -->
+                    <div class="panel">
+                        <div class="panel-header">Channel & Discriminator Settings</div>
+                        <div class="panel-body">
+                            <div class="table-container-scroll">
+                                <table class="scientific-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70px;">Active</th>
+                                            <th style="width: 60px; text-align: center;">Ch</th>
+                                            <th>Channel Alias</th>
+                                            <th style="width: 150px;">Trigger Voltage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="config-channels-tbody">
+                                    <!-- Populated dynamically (channels 1-8) -->
+                                </tbody>
+                            </table>
+                            
+                            <div class="config-actions">
+                                <button id="save-config-btn" class="btn btn-primary btn-block">
+                                    💾 Save & Apply Configuration
+                                </button>
+                                <p class="form-help text-center">Settings are saved locally to config.json in the workspace.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 2: REAL-TIME DASHBOARD -->
+            <section id="page-dash" class="page-section hidden">
+                
+                <!-- Dashboard Toolbar -->
+                <div class="dash-toolbar">
+                    <div class="toolbar-left">
+                        <label class="checkbox-label bold-label">
+                            <input type="checkbox" id="dash-normalize-toggle" checked>
+                            Normalize (CPS)
+                        </label>
+                        <span class="toolbar-divider">|</span>
+                        <div class="integration-display">
+                            Integration: <strong id="dash-integration-label">100 ms</strong>
+                        </div>
+                        <span class="toolbar-divider">|</span>
+                        <span class="toolbar-label" style="font-weight: 700; color: var(--text-secondary);">Visible Charts:</span>
+                        <label class="checkbox-label sm-label">
+                            <input type="checkbox" id="show-rates-chart" checked> Rates Bar
+                        </label>
+                        <label class="checkbox-label sm-label">
+                            <input type="checkbox" id="show-trace-chart" checked> Trace
+                        </label>
+                        <label class="checkbox-label sm-label">
+                            <input type="checkbox" id="show-hist-chart" checked> Histogram
+                        </label>
+                        <label class="checkbox-label sm-label">
+                            <input type="checkbox" id="show-jsi-chart" checked> JSI Matrix
+                        </label>
+                    </div>
+                    
+                    <div class="toolbar-right">
+                        <!-- Recorder Block -->
+                        <div class="recording-controls">
+                            <button id="dash-record-btn" class="btn btn-record">
+                                🔴 Start Data Record
+                            </button>
+                            <span id="dash-record-status" class="recording-badge hidden">
+                                Recording (duration: <strong id="dash-rec-duration">0.0s</strong>, pts: <strong id="dash-rec-points">0</strong>)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dash-layout">
+                    
+                    <!-- Left: Instantenous Channel Counts (Bar Histogram) -->
+                    <div class="panel grid-span-all" id="panel-rates-container">
+                        <div class="panel-header">
+                            <span>Instantaneous Channel Count Rates</span>
+                            <span class="panel-subtitle">Real-time bar chart of count rates across active channels</span>
+                        </div>
+                        <div class="panel-body panel-with-sidebar">
+                            <div class="chart-wrapper" id="wrapper-bar-chart">
+                                <canvas id="bar-chart-rates"></canvas>
+                            </div>
+                            <div class="axis-config-panel">
+                                <div class="config-section-title">Plot Scale & Layout</div>
+                                <div class="scale-section">
+                                    <label class="checkbox-label sm-label">
+                                        <input type="checkbox" id="bar-y-auto" checked>
+                                        Auto-scale Y Axis
+                                    </label>
+                                    <div class="scale-input-group" id="bar-y-manual-group">
+                                        <label for="bar-y-max">Y Max:</label>
+                                        <input type="number" id="bar-y-max" class="form-control xs" placeholder="Max counts" disabled>
+                                    </div>
+                                </div>
+                                <button id="export-rates-btn" class="btn btn-secondary btn-sm mt-10" style="width: 100%;">
+                                    📥 Export Rates CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Left/Top: Scrolling Counter Trace -->
+                    <div class="panel" id="panel-trace-container">
+                        <div class="panel-header">
+                            <span>Count Trace (CounterTrace)</span>
+                            <span class="panel-subtitle">Rolling history of normalized or raw count values</span>
+                        </div>
+                        <div class="panel-body panel-with-sidebar">
+                            <div class="chart-wrapper" id="wrapper-trace-chart">
+                                <canvas id="trace-chart"></canvas>
+                            </div>
+                            <div class="axis-config-panel">
+                                <div class="config-section-title">Plot Scale & Layout</div>
+                                <div class="scale-section">
+                                    <label class="checkbox-label sm-label">
+                                        <input type="checkbox" id="trace-y-auto" checked>
+                                        Auto-scale Y Axis
+                                    </label>
+                                    <div class="scale-input-group" id="trace-y-manual-group">
+                                        <label for="trace-y-min">Y Min:</label>
+                                        <input type="number" id="trace-y-min" class="form-control xs" placeholder="0" disabled>
+                                        <label for="trace-y-max">Y Max:</label>
+                                        <input type="number" id="trace-y-max" class="form-control xs" placeholder="Max" disabled>
+                                    </div>
+                                </div>
+                                <button id="export-trace-btn" class="btn btn-secondary btn-sm mt-10" style="width: 100%;">
+                                    📥 Export Trace CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right/Bottom: Coincidence Histogram -->
+                    <div class="panel" id="panel-hist-container">
+                        <div class="panel-header">
+                            <span>Coincidence Histogram</span>
+                            <span class="panel-subtitle">Coincidences between Start Ch <strong id="label-hist-start">-</strong> and Click Ch <strong id="label-hist-click">-</strong></span>
+                        </div>
+                        <div class="panel-body panel-with-sidebar">
+                            <div class="chart-wrapper" id="wrapper-hist-chart">
+                                <canvas id="dash-hist-chart"></canvas>
+                            </div>
+                            
+                            <!-- Histogram Axes settings panel -->
+                            <div class="axis-config-panel">
+                                <div class="config-section-title">Plot Scale & Layout</div>
+                                
+                                <div class="scale-section">
+                                    <label class="checkbox-label sm-label">
+                                        <input type="checkbox" id="y-auto" checked>
+                                        Auto-scale Y Axis
+                                    </label>
+                                    <div class="scale-input-group" id="y-manual-group">
+                                        <label for="y-max">Y Max:</label>
+                                        <input type="number" id="y-max" class="form-control xs" placeholder="Max counts" disabled>
+                                    </div>
+                                </div>
+                                
+                                <hr class="panel-divider-sub">
+
+                                <div class="scale-section">
+                                    <label class="checkbox-label sm-label">
+                                        <input type="checkbox" id="x-auto" checked>
+                                        Auto-scale X Axis
+                                    </label>
+                                    <div class="scale-input-group" id="x-manual-group">
+                                        <div class="input-pair">
+                                            <div>
+                                                <label for="x-min">Min (ns):</label>
+                                                <input type="number" id="x-min" class="form-control xs" step="0.5" placeholder="0" disabled>
+                                            </div>
+                                            <div>
+                                                <label for="x-max">Max (ns):</label>
+                                                <input type="number" id="x-max" class="form-control xs" step="0.5" placeholder="10" disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button id="clear-histogram-btn" class="btn btn-secondary btn-sm mt-10" style="width: 100%;">
+                                    🧹 Clear Histogram
+                                </button>
+                                <button id="export-hist-btn" class="btn btn-secondary btn-sm mt-5" style="width: 100%;">
+                                    📥 Export Histogram CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right/Bottom: JSI Heatmap Matrix -->
+                    <div class="panel" id="panel-jsi-container">
+                        <div class="panel-header">
+                            <span>Real-Time JSI Matrix</span>
+                            <span class="panel-subtitle">Coincidence counts matrix between active channels</span>
+                        </div>
+                        <div class="panel-body panel-with-sidebar">
+                            <div class="jsi-matrix-wrapper" id="wrapper-jsi-matrix">
+                                <div id="jsi-heatmap" class="jsi-heatmap-grid"></div>
+                            </div>
+                            
+                            <div class="axis-config-panel">
+                                <div class="config-section-title">JSI Controls</div>
+                                <div class="scale-section">
+                                    <label class="checkbox-label sm-label">
+                                        <input type="checkbox" id="jsi-color-auto" checked>
+                                        Auto-scale Color
+                                    </label>
+                                    <div class="scale-input-group" id="jsi-color-manual-group">
+                                        <label for="jsi-color-max">Color Max:</label>
+                                        <input type="number" id="jsi-color-max" class="form-control xs" placeholder="Max" disabled>
+                                    </div>
+                                </div>
+                                <hr class="panel-divider-sub">
+                                <button id="jsi-clear-disabled-btn" class="btn btn-secondary btn-sm" style="width: 100%;">
+                                    🔓 Reset Pixels
+                                </button>
+                                <button id="jsi-toggle-diagonal-btn" class="btn btn-secondary btn-sm mt-5" style="width: 100%;">
+                                    Toggle Diagonal
+                                </button>
+                                <button id="export-jsi-btn" class="btn btn-secondary btn-sm mt-5" style="width: 100%;">
+                                    📥 Export JSI CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

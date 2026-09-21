@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snspectrometer"
+version = "0.1.0"
+description = "Scientific SNSPD spectrometer application built on the Swabian Instruments Time Tagger Python API"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "PySide6>=6.6",
+    "pyqtgraph>=0.13",
+    "matplotlib>=3.8",
+    "psutil>=5.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "pytest-timeout"]
+
+[project.scripts]
+snspectrometer = "app.main:main"
+
+[tool.setuptools]
+packages = { find = { include = ["app*", "swabian_backend*", "simulator*"] } }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:faulthandler"

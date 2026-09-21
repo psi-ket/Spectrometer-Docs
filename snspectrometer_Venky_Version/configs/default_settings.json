@@ -1,0 +1,21 @@
+{
+  "swabian_package_path": "",
+  "data_directory": "~/SNSPD_Data",
+  "raw_directory": "",
+  "results_directory": "",
+  "presets_directory": "",
+  "demo_directory": "",
+  "autosave": true,
+  "raw_recording_policy": "ASK",
+  "plot_refresh_hz": 5.0,
+  "health_poll_s": 1.0,
+  "log_level": "INFO",
+  "max_ui_memory_mb": 512,
+  "theme": "system",
+  "app_mode": "BASIC",
+  "default_duration_s": 10.0,
+  "default_max_file_size_mb": 1024,
+  "simulator_dataset": "",
+  "auto_connect_simulator_when_no_hardware": true,
+  "scan_network_on_startup": true
+}

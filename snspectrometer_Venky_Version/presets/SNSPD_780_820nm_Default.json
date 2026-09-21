@@ -1,0 +1,19 @@
+{
+  "preset_name": "SNSPD_780_820nm_Default",
+  "version": 1,
+  "description": "Example four-detector preset. Device serial 123456 must be mapped onto a connected device when applied.",
+  "devices": [
+    {
+      "serial": "123456",
+      "model": "Time Tagger Ultra",
+      "channels": {
+        "1": {"detector_name": "SNSPD-01", "wavelength_nm": 780.0, "wavelength_bandwidth_nm": 1.0, "detector_enabled": true, "trigger_level_v": 0.035, "impedance": "50_OHM", "input_delay_ps": 0, "deadtime_ps": 10000, "event_divider": 1, "role": "signal", "notes": ""},
+        "2": {"detector_name": "SNSPD-02", "wavelength_nm": 800.0, "wavelength_bandwidth_nm": 1.0, "detector_enabled": true, "trigger_level_v": 0.040, "impedance": "50_OHM", "input_delay_ps": 0, "deadtime_ps": 10000, "event_divider": 1, "role": "signal", "notes": ""},
+        "3": {"detector_name": "SNSPD-03", "wavelength_nm": 820.0, "wavelength_bandwidth_nm": 1.0, "detector_enabled": true, "trigger_level_v": 0.038, "impedance": "50_OHM", "input_delay_ps": 0, "deadtime_ps": 10000, "event_divider": 1, "role": "idler", "notes": ""},
+        "4": {"detector_name": "SNSPD-04", "wavelength_nm": 840.0, "wavelength_bandwidth_nm": 1.0, "detector_enabled": true, "trigger_level_v": 0.045, "impedance": "50_OHM", "input_delay_ps": 0, "deadtime_ps": 10000, "event_divider": 1, "role": "idler", "notes": ""},
+        "8": {"detector_name": "LASER-SYNC", "wavelength_nm": null, "wavelength_bandwidth_nm": null, "detector_enabled": true, "trigger_level_v": 0.5, "impedance": "50_OHM", "input_delay_ps": 0, "deadtime_ps": null, "event_divider": 1, "role": "sync", "notes": "laser trigger"}
+      }
+    }
+  ],
+  "experiment_defaults": {"pump_wavelength_nm": 405.0}
+}
