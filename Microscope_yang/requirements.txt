@@ -1,0 +1,8 @@
+PyQt5>=5.15
+matplotlib>=3.5
+numpy>=1.21
+scipy>=1.7
+numba>=0.56
+labjack-ljm>=1.23
+# TimeTagger SDK must be installed separately from Swabian Instruments
+# pip install swabian-instruments-time-tagger
